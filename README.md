@@ -40,6 +40,8 @@ So for example:
 
     @reboot sleep 30 && /home/war2.info/websockify/run 6112 server.war2.ru:6112 --cert /etc/letsencrypt/live/war2.info/cert.pem --key=/etc/letsencrypt/live/war2.info/privkey.pem -D
 
+reboot to trigger cronjob, or manually run the command above to start websockify running
+
 ### Clone PvPGN HTML5 Chat Client to your Web Dir
 
     cd /var/www (your web dir)
