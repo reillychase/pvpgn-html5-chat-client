@@ -11,7 +11,7 @@ I wanted to be able to chat on PvPGN servers from my iPhone, but there was not a
 I set out to write my own iPhone app, but I am still working on it. In the meantime it was easier to write this HTML5 app. It won't stay logged in if you lock your phone, won't push notifications, but it still serves its purpose as a simple web client.
 
 ## How it works
-Originally I thought that with HTML5 and websockets I could open a raw TCP connection directly from the HTTP user to the PvPGN server, but it turns out that this is not the way websockets actually work. Websockets only allow asynchronous communication between a web client and web server.
+Originally I thought that with HTML5 and websockets I could open a raw TCP connection directly from the HTTP user to the PvPGN server, but it turns out that this is not the way websockets actually work. Websockets only allow asynchronous communication between a web client and ***webserver***.
 
 However, I discovered websockify: https://github.com/novnc/websockify
 
