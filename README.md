@@ -1,6 +1,9 @@
 # PvPGN HTML5 Chat Client
 An HTML5 chat client for PvPGN servers. Uses Materialize CSS, and Websockify
 
+DEMO: https://war2.info/chat
+LOGIN: abcde/abcde
+
 ## Intro
 I wanted to be able to chat on PvPGN servers from my iPhone, but there was not an app for that unfortunately. (Android users have WesChat: https://play.google.com/store/apps/details?id=bnet.pvpgn&hl=en) 
 
