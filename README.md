@@ -129,3 +129,8 @@ Then this changes the color to green and outputs it to the chatroom:
 - When connection is closed without pressing exit, for example by locking iPhone, the black chatroom window will display still instead of login screen
 - Fix colors for whispering
 - Unescape server messages (aka " \\' " -> " ' ")
+- Desktop version with fixed chatroom player list
+- Channel name and count at top of chatroom player list
+- Click player to whisper
+- Channels and Games menus
+- Make admin/operator of channel different color (will require checking /admins periodically)
