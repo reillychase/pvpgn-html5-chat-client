@@ -21,7 +21,7 @@ This means the web client opens a websocket to your webserver, then websockify p
 
 I rewrote the example javascript provided by websockify (wsirc.js) to make it compatible with PvPGN telnet, and named it wspvpgn.js.
 
-PvPGN sees all the connections as coming from the webserver, not the actual end-user, which is important to keep in mind. If your server has IP limiting, the HTML5 chat client may only be able to serve a few clients at a time unless you allow more connections from the same IP on PvPGN.
+PvPGN sees all the connections as coming from the webserver, not the actual end-user, which is important to keep in mind. If your PvPGN server has IP limiting, the HTML5 chat client may only be able to serve a few clients at a time unless you allow more connections from the same IP on PvPGN.
 
 ## Installation Insructions
 ### Install Websockify
