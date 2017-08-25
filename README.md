@@ -2,7 +2,6 @@
 An HTML5 chat client for PvPGN servers. Uses Materialize CSS, and Websockify
 
 DEMO: https://war2.info/chat
-
 LOGIN: abcde/abcde
 
 ## Intro
