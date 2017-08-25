@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html id="html">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+    <title>your-site.com</title>
+    <!-- CSS  -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="/static/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="/static/css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="/static/js/websockify/util.js"></script> 
+    <script src="/static/js/websockify/webutil.js"></script> 
+    <script src="/static/js/websockify/websock.js"></script>
+    <script src="/static/js/websockify/wspvpgn.js"></script> 
+  </head>
+  <body>
+    <div id="app">
+      <div class="navbar-fixed">
+      <nav class="light-blue lighten-1" role="navigation">
+
+    <div class="nav-wrapper container"><a href="/" id="logo-container" href="#" class="brand-logo">your-site.com</a>
+      <ul class="right hide-on-med-and-down">
+        <li class="white-text">Your site's main nav goes here</li>
+      </ul>
+      <div id="chatroom-mobile" class="side-nav">
+          <ul id="chatroom-ul">
+
+          </ul>
+    </div>
+      <ul id="nav-mobile" class="side-nav">
+        <li class="black-text">Your site's main nav for mobile goes here</li>
+      </ul>
+      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+  
+      <a id="chatroom" href="#" data-activates="chatroom-mobile" class="hide button-collapse" style="float: right; display: block"><i class="material-icons">group</i></a>
+      <a id="logout"onclick="disconnect()" href="#" class="hide" style="float: right"><i class="material-icons">exit_to_app</i></a>
+
+    </div>
+  </nav>
+  </div>
+<div class="row" id='top'>
+<div class="container">
+
+
+                <div id="login" class="col s12 m8 offset-m2 l6 offset-l3">
+ <div id="usernameWrap" class="input-field col s12">
+          <input id="username" type="text">
+          <label for="username">Username</label>
+</div>
+        <div id="passwordWrap" class="input-field col s12">
+          <input id="password" type="password">
+          <label for="password">Password</label>
+        </div>
+
+          <select id="server" class="browser-default" disabled>
+            <option value="server.war2.ru" disabled selected>server.war2.ru</option>
+            <option value="1">Option 1</option>
+            <option value="2">Option 2</option>
+            <option value="3">Option 3</option>
+          </select>
+
+                  <br>
+        <div id="connectButtonWrap">
+        <input id='connectButton' class="btn waves-effect waves-light blue" type='button' value='Login'>
+        </div>
+            </div>
+
+
+        </div>
+</div>
+
+
+        <div id="pvpgn" class="chat-box"></div>
+        <div class="input-field col s12 chat-footer">
+        <input style="display: none" id="msg" type="text" size=80 onkeypress="sendMsg();">
+</div>
+        </div>
+
+
+    <style>
+    #top {
+        margin: 0px;
+    }
+    #pvpgn {
+        display: none;
+        background-color: black;
+        color: white;
+        padding: 0px 0px 42px 0px;
+    }
+
+    body *, * {
+      box-sizing: border-box !important;
+    }
+    #login {
+        margin-top: 20px;
+    }
+
+    #msg {
+        background-color: transparent;
+        border: none;
+        border: 1px solid #9e9e9e;
+        height: 3rem;
+        width: 100%;
+        font-size: 1rem;
+        padding: 0;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+        -webkit-box-sizing: content-box;
+        box-sizing: content-box;
+        -webkit-transition: all 0.3s;
+        transition: all 0.3s;
+        margin: 0px;
+    }
+    .chat-footer{
+      background-color: white !important;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+
+    .chat-box {
+      height: 100%;
+      overflow: auto;
+      overflow-x: hidden;
+      background-color: black;
+
+    }
+    /* label focus color */
+    .input-field input[type=text]:focus + label {
+         color: #2196f3 !important;
+    }
+    /* label underline focus color */
+   .input-field input[type=text]:focus {
+     border-bottom: 1px solid #2196f3 !important;
+     box-shadow: 0 1px 0 0 #2196f3 !important;
+   }
+
+    .input-field input[type=password]:focus + label {
+         color: #2196f3 !important;
+    }
+    /* label underline focus color */
+   .input-field input[type=password]:focus {
+     border-bottom: 1px solid #2196f3 !important;
+     box-shadow: 0 1px 0 0 #2196f3 !important;
+   }
+    #sidenav-overlay { z-index: 1; }
+
+
+    </style>
+    <!-- built files will be auto injected -->
+    <!--  Scripts-->
+
+    <script>
+
+        var pvpgn;
+        function sendMsg() {
+            if (event.keyCode === 13) {
+                var msg = $D('msg').value;
+                $D('msg').value = "";
+                Util.Debug("calling sendMsg('" + msg + "')");
+                pvpgn.sendMsg(msg);
+            }
+        }
+
+        function connect() {
+            var ret;
+            ret  = pvpgn.connect($D('username').value,
+                               $D('password').value,
+                               $D('server').value);
+            if (! ret) { return false; }
+            $D('login').style.display = 'none';
+            $D('connectButton').disabled = true;
+            $D('pvpgn').style.display = 'block';
+            $D('msg').style.display = 'block';
+            $D('connectButtonWrap').style.display = 'none';
+            $D('html').classList.add("black");
+        }
+        function disconnect() {
+            $D('login').style.display = 'block';
+            $D('connectButton').disabled = true;
+            $D('pvpgn').style.display = 'none';
+            $D('msg').style.display = 'none';
+            $D('html').classList.remove("black");
+            pvpgn.disconnect();
+        }
+        function connected() {
+            $D('login').style.display = 'none';
+            $D('msg').disabled = false;
+            $D('connectButton').disabled = false;
+            $D('connectButtonWrap').style.display = 'none';
+            $D('logout').classList.remove("hide");
+            $D('chatroom').classList.remove("hide");
+
+        }
+        function disconnected() {
+            $D('msg').disabled = true;
+            $D('connectButton').disabled = false;
+            $D('connectButton').value = "Login";
+            $D('connectButtonWrap').style.display = 'block';
+            var password_input = document.getElementById("password");
+            password_input.addEventListener("keydown", function (e) {
+                if (e.keyCode === 13) {  //checks whether the pressed key is "Enter"
+                    connect();
+                }
+            });
+
+            $D('connectButton').onclick = connect;
+            $D('msg').style.display = 'none';
+            $D('logout').classList.add("hide");
+            $D('chatroom').classList.add("hide");
+            $D('pvpgn').style.display = 'none';
+        }
+        window.onload = function() {
+            console.log("onload");
+            var url = document.location.href;
+            disconnected();
+            
+            pvpgn = PVPGN('pvpgn', connected, disconnected, $D('username').value);
+        }
+
+    </script>
+    <script src="/static/js/materialize.js"></script>
+    <script src="/static/js/init.js"></script>
+  </body>
+</html>
+
+
+
