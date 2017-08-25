@@ -90,3 +90,40 @@ So that this:
 Becomes this:
 
         scheme = "ws://", uri;
+        
+## Developer Instructions
+If you have some skills in HTML/CSS/Javascript and would like to contribute, here is some more information:
+
+1. Here is an example of how color is added to messages coming from PvPGN:
+
+This is done in /static/js/websockify/wspvpgn.js. Regex is used to match an incoming message and change it before outputting it to the chatroom window.
+
+    is_here_regex = /^\[(.*) is here\]/g;
+    is_here = is_here_regex.exec(msg);
+
+For example this identifies when "Joining channel:" is seen
+
+    joining_channel_regex = /^Joining channel: (.*)/g;
+    joining_channel = joining_channel_regex.exec(msg);
+
+Then this changes the color to green and outputs it to the chatroom:
+
+    while (joining_channel != null) {
+
+      chatroom = ''
+
+      in_channel = [];
+
+      new_msg = '<span style="color: #00ef00;">Joining channel: ' + joining_channel[1] + '</span>'
+      writeToChannel(new_msg);
+      joining_channel = joining_channel_regex.exec(msg);
+
+      flag = 0;
+    };
+
+2. Here are some things that need some work:
+- Unicode (doesn't work currently)
+- Better handling of failed login (Currently just displays Login failed in chatroom, should stay on Login screen and give failure message)
+- Bug on iPhone: When msg box is clicked on, iPhone opens the keyboard which for some reason causes a padding between keyboard and msg box
+- Add client tag to commands automatically. Currently if you do '/channels' for example it won't work because PvPGN is expecting '/channels client-tag' like '/channels w2bn'.
+- When connection is closed without pressing exit, for example by locking iPhone, the black chatroom window will display still instead of login screen
