@@ -41,8 +41,9 @@ So for example:
     @reboot sleep 30 && /home/war2.info/websockify/run 6112 server.war2.ru:6112 --cert /etc/letsencrypt/live/war2.info/cert.pem --key=/etc/letsencrypt/live/war2.info/privkey.pem -D
 
 ### Clone PvPGN HTML5 Chat Client to your Web Dir
-cd /var/www (your web dir)
-git clone https://github.com/reillychase/pvpgn_html5_chat_client.git
+
+    cd /var/www (your web dir)
+    git clone https://github.com/reillychase/pvpgn_html5_chat_client.git
 
 ### Customize /static/js/websockify/wspvpgn.js
 Change the following code:
