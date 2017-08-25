@@ -128,4 +128,4 @@ Then this changes the color to green and outputs it to the chatroom:
 - Add client tag to commands automatically. Currently if you do '/channels' for example it won't work because PvPGN is expecting '/channels client-tag' like '/channels w2bn'.
 - When connection is closed without pressing exit, for example by locking iPhone, the black chatroom window will display still instead of login screen
 - Fix colors for whispering
-- Unescape server messages (aka "\'" -> "'")
+- Unescape server messages (aka "\\'" -> "'")
