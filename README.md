@@ -134,3 +134,4 @@ Then this changes the color to green and outputs it to the chatroom:
 - Click player to whisper
 - Channels and Games menus
 - Make admin/operator of channel different color (will require checking /admins periodically)
+- Weird glitch on iPhone, page flickers when entering password
