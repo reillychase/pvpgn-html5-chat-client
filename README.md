@@ -121,7 +121,7 @@ Then this changes the color to green and outputs it to the chatroom:
       flag = 0;
     };
 
-2. Here are some things that need some work:
+### Here are some things that need some work:
 - Unicode (doesn't work currently)
 - Better handling of failed login (Currently just displays Login failed in chatroom, should stay on Login screen and give failure message)
 - Bug on iPhone: When msg box is clicked on, iPhone opens the keyboard which for some reason causes a padding between keyboard and msg box
