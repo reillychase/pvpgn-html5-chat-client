@@ -81,7 +81,8 @@ So for example:
 ### Change /static/js/websockify/wspvpgn.js to replace 'wss://' with 'ws:/'
 
 So that this:
-          scheme = "wss://", uri;
+
+        scheme = "wss://", uri;
 
 Becomes this:
 
