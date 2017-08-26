@@ -19,7 +19,7 @@
       <div class="navbar-fixed">
       <nav class="light-blue lighten-1" role="navigation">
 
-    <div class="nav-wrapper container"><a href="/" id="logo-container" href="#" class="brand-logo">your-site.com</a>
+    <div class="nav-wrapper container"><a href="/" id="logo-container" href="#" class="brand-logo">site.com</a>
       <ul class="right hide-on-med-and-down">
         <li class="white-text">Your site's main nav goes here</li>
       </ul>
@@ -72,10 +72,14 @@
 
 
         <div id="pvpgn" class="chat-box"></div>
+
+
+        </div>
+
+
         <div class="input-field col s12 chat-footer">
         <input style="display: none" id="msg" type="text" size=80 onkeypress="sendMsg();">
 </div>
-        </div>
 
 
     <style>
@@ -86,21 +90,19 @@
         display: none;
         background-color: black;
         color: white;
-        padding: 0px 0px 42px 0px;
+        padding: 0px 0px 48px 0px;
     }
-
     body *, * {
       box-sizing: border-box !important;
     }
     #login {
         margin-top: 20px;
     }
-
     #msg {
         background-color: transparent;
         border: none;
         border: 1px solid #9e9e9e;
-        height: 3rem;
+        height: 48px;
         width: 100%;
         font-size: 1rem;
         padding: 0;
@@ -118,13 +120,11 @@
       bottom: 0;
       width: 100%;
     }
-
     .chat-box {
       height: 100%;
       overflow: auto;
       overflow-x: hidden;
       background-color: black;
-
     }
     /* label focus color */
     .input-field input[type=text]:focus + label {
@@ -135,7 +135,6 @@
      border-bottom: 1px solid #2196f3 !important;
      box-shadow: 0 1px 0 0 #2196f3 !important;
    }
-
     .input-field input[type=password]:focus + label {
          color: #2196f3 !important;
     }
@@ -145,7 +144,6 @@
      box-shadow: 0 1px 0 0 #2196f3 !important;
    }
     #sidenav-overlay { z-index: 1; }
-
 
     </style>
     <!-- built files will be auto injected -->
@@ -164,24 +162,33 @@
         }
 
         function connect() {
+            $D('connectButton').disabled = true; 
             var ret;
             ret  = pvpgn.connect($D('username').value,
                                $D('password').value,
                                $D('server').value);
-            if (! ret) { return false; }
-            $D('login').style.display = 'none';
-            $D('connectButton').disabled = true;
-            $D('pvpgn').style.display = 'block';
-            $D('msg').style.display = 'block';
-            $D('connectButtonWrap').style.display = 'none';
-            $D('html').classList.add("black");
+            if (! ret) { 
+              Materialize.toast('Connection failed', 4000, "red"); // 4000 is the duration of the toast
+              $D('msg').disabled = true;
+              $D('connectButton').disabled = false;
+              $D('connectButton').value = "Login";
+              $D('connectButtonWrap').style.display = 'block';
+              var password_input = document.getElementById("password");
+              password_input.addEventListener("keydown", function (e) {
+                  if (e.keyCode === 13) {  //checks whether the pressed key is "Enter"
+                      connect();
+                  }
+              });
+
+          }
         }
         function disconnect() {
-            $D('login').style.display = 'block';
             $D('connectButton').disabled = true;
+            $D('login').style.display = 'block';
             $D('pvpgn').style.display = 'none';
             $D('msg').style.display = 'none';
             $D('html').classList.remove("black");
+            Materialize.toast('Logged out', 1000, "green") // 4000 is the duration of the toast
             pvpgn.disconnect();
         }
         function connected() {
@@ -220,7 +227,7 @@
         }
 
     </script>
-    <script src="/static/js/materialize.js"></script>
+    <script src="/static/js/materialize.min.js"></script>
     <script src="/static/js/init.js"></script>
   </body>
 </html>

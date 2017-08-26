@@ -49,20 +49,45 @@ function do_recv() {
     }
 
 }
+function utf8_to_str(a) {
+    for(var i=0, s=''; i<a.length; i++) {
+        var h = a[i].toString(16)
+        if(h.length < 2) h = '0' + h
+        s += '%' + h
+    }
+    return decodeURIComponent(s)
+}
 
 // Handle a PVPGN message
 function recvMsg(msg) {
     var empty = 0;
     var flag = 1;
+    var not_whisper = 1;
     Util.Debug(">> recvMsg('" + msg + "')");
-    console.log(msg)
+    console.log(msg);
+
     // All the regex we want to catch coming from the server to the client
+
+    whisper_to_regex = /^\<to (.*)\> (.*)/g;
+    whisper_to = whisper_to_regex.exec(msg)
+
+    whisper_from_regex = /^\<from (.*)\> (.*)/g;
+    whisper_from = whisper_from_regex.exec(msg)
+
+    broadcast_regex = /^Broadcast: (.*)/g;
+    broadcast = broadcast_regex.exec(msg)
+
+    no_bot_regex = /^Account has no bot access/g;
+    no_bot = no_bot_regex.exec(msg)
+
+    failed_regex = /^Login failed/g;
+    failed = failed_regex.exec(msg);
 
     empty_regex = /^\r\n$/g;
     empty2 = empty_regex.exec(msg);
 
-    unique_regex = /^Your unique name/g;
-    unique = unique_regex.exec(msg);
+    success_regex = /^Your unique name/g;
+    success = success_regex.exec(msg);
 
     password_regex = /^Password/g;
     password2 = password_regex.exec(msg);
@@ -107,27 +132,83 @@ function recvMsg(msg) {
     error = error_regex.exec(msg);
 
     // Catch all to turn anything that didn't match a regex into a yellow msg from server
-    if (unique == null && joining_channel == null && empty2 == null && username2 == null && password2 == null && bot == null && sorry == null && enter == null && chat == null && is_here == null && banned == null && enters == null && error == null && leaves == null && quit == null && kicked == null) {
+    if (whisper_to == null && whisper_from == null && success == null && failed == null && joining_channel == null && empty2 == null && username2 == null && password2 == null && bot == null && sorry == null && enter == null && chat == null && is_here == null && banned == null && enters == null && error == null && leaves == null && quit == null && kicked == null) {
       new_msg = '<span style="color: #ffff00;">' + escapeHtml(msg) + '</span>'
       writeToChannel(new_msg);
       flag = 0;
     }
 
-    // What to do when the above regexes are seen
-    if (unique != null || username2 != null || password2 != null || sorry !=null || bot != null || enter != null || empty2 != null) {
+    // Catch all for messages that should be ignored and not sent to chatroom
+    if (username2 != null || password2 != null || sorry !=null || bot != null || enter != null || empty2 != null) {
       flag = 0;
     }
-    while (chat != null) {
 
-      new_msg = '<span style="color: #ffff00;">&lt;' + chat[1] + '&gt;</span><span style="color: #fff;"> ' + escapeHtml(chat[2]) + '</span>'
+
+    if (whisper_to != null) {
+      new_msg = '<span style="color: #00ffff;">&ltTo: ' + unescape(escapeHtml(whisper_to[1])) + '&gt</span><span style="color: gray"> ' + unescape(escapeHtml(whisper_to[2])) + '</span>'
       writeToChannel(new_msg);
+      whisper_to = whisper_to_regex.exec(msg);
+      flag = 0;
+      not_whisper = 0;
+    }
+
+    if (whisper_from != null) {
+      new_msg = '<span style="color: #ffff00;">&ltFrom: ' + unescape(escapeHtml(whisper_from[1])) + '&gt</span><span style="color: gray"> ' + unescape(escapeHtml(whisper_from[2])) + '</span>'
+      writeToChannel(new_msg);
+      whisper_from = whisper_from_regex.exec(msg);
+      flag = 0;
+      not_whisper = 0;
+    }
+
+    // What to do when all other regexes are seen
+    while (success != null) {
+      $D('login').style.display = 'none';
+      $D('pvpgn').style.display = 'block';
+      $D('msg').style.display = 'block';
+      $D('connectButtonWrap').style.display = 'none';
+      $D('html').classList.add("black");
+      Materialize.toast('Connected!', 1000, "green") // 4000 is the duration of the toast
+      success = success_regex.exec(msg);
+      flag = 0;
+    };
+
+    while (failed != null) {
+      $D('login').style.display = 'block';
+      $D('connectButton').disabled = false;
+      $D('pvpgn').style.display = 'none';
+      $D('msg').style.display = 'none';
+      $D('html').classList.remove("black");
+      Materialize.toast('Login failed', 4000, "red") // 4000 is the duration of the toast
+      failed = failed_regex.exec(msg);
+      that.disconnect();
+      flag = 0;
+    };
+
+    while (no_bot != null) {
+
+      $D('login').style.display = 'block';
+      $D('connectButton').disabled = false;
+      $D('pvpgn').style.display = 'none';
+      $D('msg').style.display = 'none';
+      $D('html').classList.remove("black");
+      Materialize.toast("PvPGN server blocked telnet", 4000, "red") // 4000 is the duration of the toast
+      no_bot = no_bot_regex.exec(msg);
+      that.disconnect();
+      flag = 0;
+    };
+
+    while (chat != null) {
+      if (not_whisper == 1) {
+      new_msg = '<span style="color: #ffff00;">&lt;' + escapeHtml(chat[1]) + '&gt;</span><span style="color: #fff;"> ' + unescape(escapeHtml(chat[2])) + '</span>'
+      writeToChannel(new_msg);
+      }
       chat = chat_regex.exec(msg);
       flag = 0;
     };
 
     while (is_here != null) {
 
-      chatroom = chatroom + '<li><a href="#"">' + is_here[1] + '</a></li>'
+      chatroom = chatroom + '<li><a href="#"">' + escapeHtml(is_here[1]) + '</a></li>'
 
       in_channel.push(is_here[1]);
 
@@ -138,7 +219,7 @@ function recvMsg(msg) {
 
     while (enters != null) {
 
-      chatroom = chatroom + '<li><a href="#"">' + enters[1] + '</a></li>'
+      chatroom = chatroom + '<li><a href="#"">' + escapeHtml(enters[1]) + '</a></li>'
 
       in_channel.push(enters[1]);
 
@@ -156,7 +237,7 @@ function recvMsg(msg) {
 
       chatroom = '';
       for (var i = 0; i < in_channel.length; i++) {
-            chatroom = chatroom + '<li><a href="#"">' + in_channel[i] + '</a></li>'
+            chatroom = chatroom + '<li><a href="#"">' + escapeHtml(in_channel[i]) + '</a></li>'
       }
 
 
@@ -174,7 +255,7 @@ function recvMsg(msg) {
 
       chatroom = '';
       for (var i = 0; i < in_channel.length; i++) {
-            chatroom = chatroom + '<li><a href="#"">' + in_channel[i] + '</a></li>'
+            chatroom = chatroom + '<li><a href="#"">' + escapeHtml(in_channel[i]) + '</a></li>'
       }
 
 
@@ -192,7 +273,7 @@ function recvMsg(msg) {
 
       chatroom = '';
       for (var i = 0; i < in_channel.length; i++) {
-            chatroom = chatroom + '<li><a href="#"">' + in_channel[i] + '</a></li>'
+            chatroom = chatroom + '<li><a href="#"">' + escapeHtml(in_channel[i]) + '</a></li>'
       }
 
 
@@ -210,7 +291,7 @@ function recvMsg(msg) {
 
       chatroom = '';
       for (var i = 0; i < in_channel.length; i++) {
-            chatroom = chatroom + '<li><a href="#"">' + in_channel[i] + '</a></li>'
+            chatroom = chatroom + '<li><a href="#"">' + escapeHtml(in_channel[i]) + '</a></li>'
       }
 
 
@@ -225,7 +306,7 @@ function recvMsg(msg) {
 
       in_channel = [];
 
-      new_msg = '<span style="color: #00ef00;">Joining channel: ' + joining_channel[1] + '</span>'
+      new_msg = '<span style="color: #00ef00;">Joining channel: ' + escapeHtml(joining_channel[1]) + '</span>'
       writeToChannel(new_msg);
       joining_channel = joining_channel_regex.exec(msg);
 
@@ -234,9 +315,18 @@ function recvMsg(msg) {
 
     while (error != null) {
 
-      new_msg = '<span style="color: #ff0000;">' + error[1] + '</span>'
+      new_msg = '<span style="color: #ff0000;">' + escapeHtml(error[1]) + '</span>'
       writeToChannel(new_msg);
       error = error_regex.exec(msg);
+
+      flag = 0;
+    };
+
+    while (broadcast != null) {
+
+      new_msg = '<span style="color: #ff0000;">' + escapeHtml(broadcast[1]) + '</span>'
+      writeToChannel(new_msg);
+      broadcast = broadcast_regex.exec(msg);
 
       flag = 0;
     };
@@ -248,7 +338,9 @@ function recvMsg(msg) {
     }
 
 }
+
 function writeToChannel(msg) {
+
     msgLog.push(msg);
     var full_list = ""
     for(var i=0; i<msgLog.length; ++i){
@@ -259,6 +351,7 @@ function writeToChannel(msg) {
     window.scrollTo(0,document.body.scrollHeight);
 
 }
+
 function escapeHtml(unsafe) {
     return unsafe
          .replace(/&/g, "&amp;")
@@ -329,6 +422,11 @@ that.disconnect = function() {
     if (ws) {
         ws.close();
     }
+    $D('login').style.display = 'block';
+    $D('connectButton').disabled = false;
+    $D('pvpgn').style.display = 'none';
+    $D('msg').style.display = 'none';
+    $D('html').classList.remove("black");
     $D("pvpgn").innerHTML = '';
     disconnect_callback();
     Util.Debug("<< disconnect");
