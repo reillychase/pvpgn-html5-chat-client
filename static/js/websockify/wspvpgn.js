@@ -49,24 +49,31 @@ function do_recv() {
     }
 
 }
-function utf8_to_str(a) {
-    for(var i=0, s=''; i<a.length; i++) {
-        var h = a[i].toString(16)
-        if(h.length < 2) h = '0' + h
-        s += '%' + h
-    }
-    return decodeURIComponent(s)
-}
 
 // Handle a PVPGN message
 function recvMsg(msg) {
     var empty = 0;
     var flag = 1;
     var not_whisper = 1;
-    Util.Debug(">> recvMsg('" + msg + "')");
-    console.log(msg);
+    Util.Debug(">> recvMsg");
 
     // All the regex we want to catch coming from the server to the client
+
+    unicode_catch_regex = /\\([0-9][0-9][0-9])/g;
+    unicode_catch = unicode_catch_regex.exec(msg)
+
+
+    if (unicode_catch != null) {
+
+      result = msg.match(unicode_catch_regex);
+      for(var i=0; i<result.length; ++i){
+        charToReplace = result[i].toString();
+        charCode = parseInt(result[i].toString().replace(/\\(.)/mg, "$1"));
+        console.log(charCode)
+        msg = msg.replace(charToReplace, String.fromCharCode(parseInt(charCode, 8)))
+      }
+
+    }
 
     whisper_to_regex = /^\<to (.*)\> (.*)/g;
     whisper_to = whisper_to_regex.exec(msg)
@@ -142,7 +149,6 @@ function recvMsg(msg) {
     if (username2 != null || password2 != null || sorry !=null || bot != null || enter != null || empty2 != null) {
       flag = 0;
     }
-
 
     if (whisper_to != null) {
       new_msg = '<span style="color: #00ffff;">&ltTo: ' + unescape(escapeHtml(whisper_to[1])) + '&gt</span><span style="color: gray"> ' + unescape(escapeHtml(whisper_to[2])) + '</span>'
