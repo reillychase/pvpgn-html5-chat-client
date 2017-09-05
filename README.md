@@ -123,7 +123,7 @@ Then this changes the color to green and outputs it to the chatroom:
 
 ### Here are some things that need some work:
 - ~~Unicode (doesn't work currently)~~
-- Only working in Chrome and Safari. IE, Edge, and Firefox give websocket error
+- ~~Only working in Chrome and Safari. IE, Edge, and Firefox give websocket error~~
 - ~~Better handling of failed login (Currently just displays Login failed in chatroom, should stay on Login screen and give failure message)~~
 - Bug on iPhone: When msg box is clicked on, iPhone opens the keyboard which for some reason causes a padding between keyboard and msg box
 - Add client tag to commands automatically. Currently if you do '/channels' for example it won't work because PvPGN is expecting '/channels client-tag' like '/channels w2bn'.

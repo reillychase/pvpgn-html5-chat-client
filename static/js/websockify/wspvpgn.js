@@ -400,7 +400,7 @@ that.connect = function(username, password, server) {
         channel = '',
         scheme = "wss://", uri;
     if (server == 'server.war2.ru') {
-      port = '6112';
+      port = '443';
       channel = 'war2bne'
     }
     Util.Debug(">> connect");
