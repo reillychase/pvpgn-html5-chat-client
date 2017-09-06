@@ -398,10 +398,29 @@ that.connect = function(username, password, server) {
         username = username,
         password = password,
         channel = '',
+        clientTag = '',
         scheme = "wss://", uri;
+    // This checks the server which was selected from the server dropdown
+    // the port is the websockify instance to connect to
     if (server == 'server.war2.ru') {
-      port = '443';
-      channel = 'war2bne'
+      port = '6112';
+      channel = 'war2bne';
+      clientTag = 'W2BN'
+    }
+    if (server == 'backup.war2.ru') {
+      port = '6113';
+      channel = 'war2bne';
+      clientTag = 'W2BN'
+    }
+    if (server == 'server.war2.me') {
+      port = '6114';
+      channel = 'war2bne';
+      clientTag = 'W2BN'
+    }
+    if (server == 'backup.war2.me') {
+      port = '6115';
+      channel = 'war2bne';
+      clientTag = 'W2BN'
     }
     Util.Debug(">> connect");
     if (ws) {
@@ -409,7 +428,7 @@ that.connect = function(username, password, server) {
     }
 
     uri = scheme + host + ":" + port;
-    Util.Info("connecting to " + uri);
+    console.log("connecting to " + uri);
 
     ws.open(uri);
     sendCmd("\r\n");
